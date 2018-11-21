@@ -112,18 +112,22 @@ class My_News_Html_Helper
     {
         // if the call was successful and we actually have some results to show..
         if (isset($resultsData->value) && empty($resultsData->value) === false) {
-            // var_dump($resultsData->value);
             // loop the result and build html alerts to show the various aspects of the articles
             $html .= '<div class="col-6 mt-2">';
             $html .= '<h3 class="col-12 text-center">Results In The '.ucfirst($selectedNews).' News Category</h3>';
             $html .= '<hr>';
             $html .= '<ul class="list-unstyled mt-2">';
             foreach ($resultsData->value as $article) {
+
                 // if we dont have an image for the article, we'll use our placeholder so it doesn't break.
                 $articleImage = get_site_url().'/wp-content/plugins/my_news/assets/my_news_missing_image.png';
                 if (isset($article->image)) {
                     $articleImage = $article->image->thumbnail->contentUrl;
                 }
+
+                // format the date
+
+                $publishedDate = new \DateTime($article->datePublished);
                 $html .= '<li class="media">';
                 $html .= '<div class="col-2">';
                 $html .= '<img src="'.$articleImage.'"  class="img-thumbnail" />';
@@ -131,7 +135,16 @@ class My_News_Html_Helper
                 $html .= '<div class="media-body">';
                 $html .= '<h5 class="mt-0 mb-1">'.$article->name.'</h5>';
                 $html .= '<p>'.$article->description.'</p>';
-                $html .= '<a class="btn btn-primary" target="_blank" href="'.$article->url.'">Read More (Opens source website)</a>';
+                $html .= '<div class="row">';
+                $html .= '<span class="badge badge-pill badge-primary">Published by: '.$article->provider[0]->name.'</span>';
+                $html .= '<span class="ml-1 badge badge-pill badge-primary">Published on: '.$publishedDate->format('d-m-Y G:i:s').'</span>';
+
+                $html .= '</div>';
+                $html .= '<div class="row">';
+
+                $html .= '<a class="btn btn-primary mt-1" target="_blank" href="'.$article->url.'">Read More (Opens source website)</a>';
+                $html .= '</div>';
+
                 $html .= '</div>';
                 $html .= '</li>';
                 $html .= '<hr>';
