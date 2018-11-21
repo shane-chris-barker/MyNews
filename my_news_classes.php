@@ -180,7 +180,7 @@ class My_News_Html_Helper
         $html .= '</div>';
         $html .= '<div class="form-group">';
         $html .= $this->build_label_element('api_key', 'Bing News Search API Key');
-        $html .= $this->build_input_element('text', 'api_key', 'api_key', $apiKey);
+        $html .= $this->build_input_element('password', 'api_key', 'api_key', $apiKey);
         $html .= $this->build_button('Get News', null, 'btn btn-primary mt-2');
         $html .= '</div>';
         $html .= '</form>';

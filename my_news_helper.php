@@ -24,7 +24,6 @@ class My_News_Helper
         switch($type) {
             case('news') :
                 $options = [
-                    ''              => 'Please Select',
                     'sports'        => 'Sports',
                     'business'      => 'Business',
                     'general'       => 'General',

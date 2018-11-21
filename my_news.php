@@ -3,7 +3,7 @@
 Plugin Name:  My News
 Plugin URI:  http://shanechrisbarker.co.uk/wordpress/plugins/my-news
 Description:  Wordpress plugin for displaying a subjects latest news in the wordpress admin area
-Version:      0.0.1
+Version:      1.0.0
 Author:       Shane Christopher Barker
 Author URI:  http://shanechrisbarker.co.uk
 License:      GPL2
