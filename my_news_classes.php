@@ -80,8 +80,13 @@ class My_News_Html_Helper
     {
         $html .= '<div class="col-4 mt-2">';
         $html .= '<h3 class="my_news_mt_10">My News</h3>';
-        $html .= '<p><strong>Please Note:</strong> News articles are pulled from <a href="https://newsapi.org/" target="_blank"> https://newsapi.org/</a></p>';
-        $html .= '<p>You will need to register there for an API key and enter into the form below</p>';
+        $html .= '<p><strong>Please Note:</strong> News articles are pulled from';
+        $html .= ' Bing and you will need an api key from Microsoft for this plugin to work.';
+        $html .= '<br><br><strong>Microsoft offer a free tier service which allows 3000 searches per month at no charge.</strong> - ';
+        $html .= 'Click <a href="https://azure.microsoft.com/en-us/free/" target=_"blank">here</a> for more information</p>';
+        $html .= '<p>Once you have an api key, will need to enter this into the form below</p>';
+        $html .= '<p><strong>Please Note: </strong>Monitoring billing and usage with the Bing News search service is the responsibility ';
+        $html .= 'of the user, not this plugin';
         $html .= '<form method="post" action="" id="my_news_form" class="col-12">';
         $html .= $this->build_input_element('hidden', 'settings_post', 'settings_post', 'settings_post' );
         $html .= '<div class="form-group">';
@@ -106,7 +111,8 @@ class My_News_Html_Helper
     function build_results_html($selectedNews, $resultsData)
     {
         // if the call was successful and we actually have some results to show..
-        if (isset($resultsData->value)) {
+        if (isset($resultsData->value) && empty($resultsData->value) === false) {
+            // var_dump($resultsData->value);
             // loop the result and build html alerts to show the various aspects of the articles
             $html .= '<div class="col-6 mt-2">';
             $html .= '<h3 class="col-12 text-center">Results In The '.ucfirst($selectedNews).' News Category</h3>';
@@ -133,8 +139,13 @@ class My_News_Html_Helper
             $html .= '</ul>';
             $html .= '</div>';
         } else {
-            $html .= '<div class="alert alert-warning">';
-            $html .= '<h3>No Results Found - Please adjust your search</h3>';
+            if (isset($resultsData->value) && empty($resultsData->value)) {
+                $html .= '<div class="alert alert-info text-center mt-5" role="alert">';
+                $html .= '<h3>Click Get News To Begin</h3>';
+            } else {
+                $html .= '<div class="alert alert-danger text-center mt-5" role="alert">';
+                $html .= '<h3>No Results Found - Please adjust your search</h3>';
+            }
             $html .= '</div>';
         }
         return $html;
