@@ -2,9 +2,9 @@
 /*
 Plugin Name:  My News
 Plugin URI:  http://shanechrisbarker.co.uk/wordpress/plugins/my-news
-Description:  Wordpress plugin for displaying a subjects latest news in the wordpress admin area
+Description: Plugin for querying the Bing news api and viewing the results.
 Version:      1.0.0
-Author:       Shane Christopher Barker
+Author:      shanechrisbarker
 Author URI:  http://shanechrisbarker.co.uk
 License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
@@ -16,18 +16,18 @@ add_action( 'admin_menu', 'my_news' );
 
 /*
 * Contains all the classes needed for the function to run,
-* with the exception of the my_news_helper
+* with the exception of the my_news_helper.
 */
 include('my_news_classes.php');
 /*
-* Contains the my_news_helper class
+* Contains the my_news_helper class.
 */
 include('my_news_helper.php');
 
 /**
- * Add the plugin page
+ * Add the plugin page.
  *
- * functionn adds the plugin settings options the menu and fires the main my_news_settings function
+ * functionn adds the plugin settings options the menu and fires the main my_news_settings function.
  *
  * @since 1.0.0
  * @return bool Success

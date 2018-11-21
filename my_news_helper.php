@@ -1,6 +1,6 @@
 <?php
 /**
- * Carry out generic functions related to the plugin
+ * Carry out generic functions related to the plugin.
  *
  * Class does dirty tasks such as returning various config options.
  *
@@ -12,7 +12,7 @@ class My_News_Helper
      * Get options to build select elements with.
      *
      * Function returns array with $key => $value pairs for
-     * populating the select elements on the admin page
+     * populating the select elements on the admin page.
      *
      * @since 1.0.0
      *

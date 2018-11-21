@@ -9,7 +9,7 @@
 class Api_Caller
 {
     /**
-     * Perform a GET request on the bing api with the given params
+     * Perform a GET request on the bing api with the given params.
      *
      * Function returns a response from the Bing api.
      *
@@ -35,9 +35,9 @@ class Api_Caller
     }
 
     /**
-     * Build a the query string from the GET request based on passed in params
+     * Build a the query string from the GET request based on passed in params.
      *
-     * Function returns a query string for use with a GET request
+     * Function returns a query string for use with a GET request.
      *
      * @since 1.0.0
      * @param string $apiKey The api key to send to the api
@@ -57,7 +57,7 @@ class Api_Caller
 
 
 /**
- * Carry out tasks related to the lopading of assets
+ * Carry out tasks related to the lopading of assets.
  *
  * Class carries out functions relating to the CSS and Js of the plugin, including bootstrap.
  *
@@ -66,9 +66,9 @@ class Api_Caller
 class My_News_Asset_Helper
 {
     /**
-     * Activate the plugins assets
+     * Activate the plugins assets.
      *
-     * Fire off any CSS and JS that the plugin uses
+     * Fire off any CSS and JS that the plugin uses.
      *
      * @since 1.0.0
      * @return bool The operation succeeded
@@ -104,7 +104,7 @@ class My_News_Asset_Helper
 /**************************************************************************/
 /**************************************************************************/
 /**
- * Carry out HTML related tasks
+ * Carry out HTML related tasks.
  *
  * Class builds html elements and views and returns as html strings.
  *
