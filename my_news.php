@@ -56,6 +56,7 @@ function my_news ()
  */
 function my_news_settings()
 {
+    // ensure the user is allowed to access this page.
     if (false === current_user_can('manage_options')) {
         wp_die(__('You do not have permission to change these settings. '));
     }
