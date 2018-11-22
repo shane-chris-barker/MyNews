@@ -59,19 +59,23 @@ function my_news_settings()
     if (false === current_user_can('manage_options')) {
         wp_die(__('You do not have permission to change these settings. '));
     }
-    $news         = null;
-    $selectedNews = null;
-    $assetHelper  = new My_News_Asset_Helper();
-    $htmlBuilder  = new My_News_Html_Helper();
-    $newsHelper   = new My_News_Helper();
+
+    $nonce          = wp_create_nonce( 'my_news_nonce' );
+    $news           = null;
+    $selectedNews   = null;
+    $assetHelper    = new My_News_Asset_Helper();
+    $htmlBuilder    = new My_News_Html_Helper();
+    $newsHelper     = new My_News_Helper();
     $assetHelper->set_css_and_js();
 
     // the news and language options that will be available for selection
     $availableNews      = $newsHelper->get_available_options('news');
     $availableLanguages = $newsHelper->get_available_options('languages');
 
+    // get the protocols we'll allow when outputting html.
+    $allowedProtocols   = $newsHelper->get_allowed_protocols();
+
     // get any previously set values - $variable = false if not already stored in db.
-    $configValues       = get_option('my_news_values');
     $selectedNews       = get_option('mn_selected_news');
     $apiKey             = get_option('mn_api_key');
     $selectedLanguage   = get_option('mn_selected_news_language');
@@ -79,6 +83,14 @@ function my_news_settings()
     // if we don't have a selected language, default to US
     if ($selectedLanguage === false) {
         $selectedLanguage = 'es-us';
+    }
+
+    if (empty($_POST) === false) {
+        // we are posting so we need to check the nonce
+        $nonce = $_POST['_wpnonce'];
+        if (wp_verify_nonce($nonce, 'my_news_nonce') === false ) {
+            wp_die(__('You do not have permission to carry out this action. '));
+        }
     }
 
     // if we don't have a valid api key and we aren't posting one, show a warning.
@@ -104,30 +116,50 @@ function my_news_settings()
         } else {
             // here we are checking if an $apiKey has been posted along with the form.
             if (isset($_POST['api_key'])) {
-                /**
-                * We don't have an api key currently saved or we do but it's
-                * not the one that is being posted so we'll need to update the
-                * record regardless.
-                */
-                if ($apiKey === false || $apiKey !== $_POST['api_key']) {
-                    update_option('mn_api_key', $_POST['api_key']);
-                    $apiKey = $_POST['api_key'];
+                $postedKey = $_POST['api_key'];
+                // Check the api key is purely alphanumeric
+                $apiKeyIsSafe = ctype_alnum($postedKey);
+                if ($apiKeyIsSafe === true) {
+                    if ($apiKey !== $postedKey) {
+                        // api key and stored api key are not the same - save option.
+                        update_option('mn_api_key', $postedKey);
+                        $apiKey = $postedKey;
+
+                        echo $htmlBuilder->build_alert
+                        (
+                            'The Api key was updated succesfully',
+                            $alertType = 'success'
+                        );
+                    }
+                } else {
+
                     echo $htmlBuilder->build_alert
                     (
-                        'The Api key was updated succesfully',
-                        $alertType = 'success'
+                        'The Api key contained invalid characters. Please check and try again',
+                        $alertType = 'error'
                     );
+                    $apiKey = false;
                 }
             }
         }
         if(isset($_POST['languages'])) {
+            $postedLanguage = $_POST['languages'];
             // if we have a language being posted, Make sure it's a value we expect
-            if (array_key_exists($_POST['languages'], $availableLanguages)) {
+            if (array_key_exists($postedLanguage, $availableLanguages)) {
                 // value exists but if it is the current value then no point in updating
-                if ($selectedLanguage !== $_POST['languages']) {
-                    update_option('mn_selected_news_language', $_POST['languages']);
+                if ($selectedLanguage !== $postedLanguage) {
+                    // the languages have a '-' in their values - explode on the - and then
+                    // check values to ensure what we have left is alphanumeric and safe.
+                    $postedLanguageParts = explode('-', $postedLanguage);
+                    if (ctype_alnum($postedLanguageParts[0]) && ctype_alnum($postedLanguageParts[1])) {
+                        // the value is safe
+                        update_option('mn_selected_news_language', $postedLanguage);
+                        $selectedLanguage = $postedLanguage;
+                    } else {
+                        // the posted language wasn't a value that we expected - revert to default
+                        $selectedLanguage = 'es-us';
+                    }
                 }
-                $selectedLanguage = $_POST['languages'];
             }
         }
     }
@@ -148,12 +180,16 @@ function my_news_settings()
     // build the settings form
     $formHtml = $htmlBuilder->build_settings_form
     (
+        $nonce,
         $selectedNews,
         $selectedLanguage,
         $apiKey,
         $availableLanguages,
         $availableNews
     );
+    $allowedFormHtml    = $newsHelper->get_allowed_form_html();
+    $formHtml           = wp_kses($formHtml, $allowedFormHtml, $allowedProtocols);
+
     echo $formHtml;
 
     // if we have an api key and selected news, we are ready to roll!
@@ -171,7 +207,10 @@ function my_news_settings()
             echo '</div>';
         } else {
             // the call was good - build the results html
-            $resultsHtml  = $htmlBuilder->build_results_html($selectedNews, $resultsData);
+            $resultsHtml = $htmlBuilder->build_results_html($selectedNews, $resultsData);
+            // make sure the html elements are what we expect
+            $allowedHtml        = $newsHelper->get_allowed_results_html();
+            $resultsHtml        = wp_kses($resultsHtml, $allowedHtml, $allowedProtocols);
             echo $resultsHtml;
             echo '</div>';
         }
