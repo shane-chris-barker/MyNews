@@ -99,7 +99,7 @@ function my_news_settings()
     && ($_POST['api_key'] === '' || null === $_POST['api_key'])) {
         echo $htmlBuilder->build_alert
         (
-            '<strong>Please Note</strong>: You do not have api key saved - no results will be displayed until an api key is submitted',
+            'Please Note: You do not have api key saved - no results will be displayed until an api key is submitted',
             $alertType = 'error'
         );
     }
@@ -118,9 +118,9 @@ function my_news_settings()
             // here we are checking if an $apiKey has been posted along with the form.
             if (isset($_POST['api_key'])) {
                 $postedKey = $_POST['api_key'];
-                // Check the api key is purely alphanumeric
+                // Check the api key is purely alphanumeric or an empty string (if deleting the key)
                 $apiKeyIsSafe = ctype_alnum($postedKey);
-                if ($apiKeyIsSafe === true) {
+                if ($apiKeyIsSafe === true || $postedKey === '') {
                     if ($apiKey !== $postedKey) {
                         // api key and stored api key are not the same - save option.
                         update_option('mn_api_key', $postedKey);
@@ -167,15 +167,20 @@ function my_news_settings()
 
     // if these are identical, nothing has changed so no need to update for the sake of it.
     if ($selectedNews !== $news && isset($news)) {
-        // update the selected news article in the db
-        update_option('mn_selected_news', $news);
-        $selectedNews = $news;
-        echo $htmlBuilder->build_alert
-        (
-            'Selected News Category updated succesfully',
-            $alertType = 'success'
-        );
+        // if the news option is purely alphanumeric and it exists in the array of expected values
+        // then we can go ahead and update the options.
+        if (ctype_alnum($news) && true === in_array($news, $availableNews)) {
+            // update the selected news article in the db
+            update_option('mn_selected_news', $news);
+            $selectedNews = $news;
+            echo $htmlBuilder->build_alert
+            (
+                'Selected News Category updated succesfully',
+                $alertType = 'success'
+            );
+        }
     }
+
 
     echo '<div class="row">';
     // build the settings form
@@ -195,7 +200,7 @@ function my_news_settings()
 
     // if we have an api key and selected news, we are ready to roll!
     if ($selectedNews !== false && $apiKey !== false && $apiKey !== '') {
-        $apiCaller    = new Api_Caller();
+        $apiCaller    = new My_News_Api_Caller();
         $resultsData  = $apiCaller->get_news($selectedNews, $selectedLanguage, $apiKey);
         if(isset($resultsData->statusCode) && $resultsData->statusCode === 401) {
             // usually this means your api key is invalid.

@@ -6,7 +6,7 @@
  *
  * @since 1.0.0
  */
-class Api_Caller
+class My_News_Api_Caller
 {
     /**
      * Perform a GET request on the bing api with the given params.
@@ -73,18 +73,13 @@ class My_News_Asset_Helper
      */
     function set_css_and_js()
     {
-        $boostrapCss    = 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css';
-        $boostrapJs     = [];
-        $boostrapJs[]   = 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js';
-        $boostrapJs[]   = 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js';
+        $boostrapCss    = get_site_url().'/wp-content/plugins/my_news/assets/bootstrap.min.css';
+        $boostrapJs     = get_site_url().'/wp-content/plugins/my_news/assets/bootstrap.min.js';
         wp_register_style('bootstrap_four_css', $boostrapCss );
         wp_enqueue_style('my_news_css');
         wp_enqueue_style('bootstrap_four_css');
+        wp_enqueue_script($js);
 
-        // loop and enque the js files.
-        foreach ($boostrapJs as $js) {
-            wp_enqueue_script($js);
-        }
 
         // add bootstraps meta
         $bootstrapMeta = '<meta name="viewport" content="width=device-width,';
@@ -168,8 +163,6 @@ class My_News_Html_Helper
         $html .= '<p>Once you have an api key, will need to enter this into the form below</p>';
         $html .= '<p><strong>Please Note: </strong>Monitoring billing and usage with the Bing News search service is the responsibility ';
         $html .= 'of the user, not this plugin';
-
-
         $html .= '<form method="post" action="" id="my_news_form" class="col-12">';
         $html .= $this->build_input_element('hidden', 'settings_post', 'settings_post', 'settings_post' );
         $html .= $this->build_input_element('hidden', '_wpnonce', '_wpnonce', $nonce);
@@ -247,9 +240,8 @@ class My_News_Html_Helper
             $html .= '</ul>';
             $html .= '</div>';
         } else {
-                $html .= '<div class="alert alert-danger text-center mt-5" role="alert">';
-                $html .= '<h3>No Results Found - Please adjust your search</h3>';
-            }
+            $html .= '<div class="alert alert-danger text-center mt-5" role="alert">';
+            $html .= '<h3>No Results Found - Please adjust your search</h3>';
             $html .= '</div>';
         }
         return $html;
