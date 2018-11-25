@@ -73,8 +73,8 @@ class My_News_Asset_Helper
      */
     function set_css_and_js()
     {
-        $boostrapCss    = get_site_url().'/wp-content/plugins/my_news/assets/bootstrap.min.css';
-        $boostrapJs     = get_site_url().'/wp-content/plugins/my_news/assets/bootstrap.min.js';
+        $boostrapCss    = plugins_url('assets/bootstrap.min.css',  __FILE__);
+        $boostrapJs     = plugins_url('assets/bootstrap.min.js',  __FILE__);
         wp_register_style('bootstrap_four_css', $boostrapCss );
         wp_enqueue_style('my_news_css');
         wp_enqueue_style('bootstrap_four_css');
@@ -208,7 +208,7 @@ class My_News_Html_Helper
             foreach ($resultsData->value as $article) {
 
                 // if we dont have an image for the article, we'll use our placeholder so it doesn't break.
-                $articleImage = get_site_url().'/wp-content/plugins/my_news/assets/my_news_missing_image.png';
+                $articleImage = plugins_url('assets/my_news_missing_image.png',  __FILE__);
                 if (isset($article->image)) {
                     $articleImage = $article->image->thumbnail->contentUrl;
                 }
