@@ -25,9 +25,9 @@ include('my_news_classes.php');
 include('my_news_helper.php');
 
 /**
- * Add the plugin page.
+ * Add the plugin page to the admin menu.
  *
- * functionn adds the plugin settings options the menu and fires the main my_news_settings function.
+ * function adds the plugin settings to the menu and fires the main my_news_settings function.
  *
  * @since 1.0.0
  * @return bool Success
@@ -169,7 +169,7 @@ function my_news_settings()
     if ($selectedNews !== $news && isset($news)) {
         // if the news option is purely alphanumeric and it exists in the array of expected values
         // then we can go ahead and update the options.
-        if (ctype_alnum($news) && true === in_array($news, $availableNews)) {
+        if (ctype_alnum($news) && true === array_key_exists($news, $availableNews)) {
             // update the selected news article in the db
             update_option('mn_selected_news', $news);
             $selectedNews = $news;
